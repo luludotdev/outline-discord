@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Prepare Workspace
         shell: bash
-        run: ./prep.sh
+        run: ./scripts/prep.sh
       - name: Prepare Docker Build
         id: prepare
         run: |
@@ -19,7 +19,7 @@ jobs:
           DOCKER_USER=`echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]'`
           DOCKER_IMAGE=ghcr.io/$DOCKER_USER/$IMAGE_NAME
 
-          OUTLINE_TAG=`./get_tag.sh`
+          OUTLINE_TAG=`./scripts/get_tag.sh`
           OUTLINE_TAG=${OUTLINE_TAG#v}
 
           VERSION=`git rev-parse --short HEAD`
@@ -67,4 +67,4 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       - name: Cleanup
         shell: bash
-        run: ./cleanup.sh
+        run: ./scripts/cleanup.sh
