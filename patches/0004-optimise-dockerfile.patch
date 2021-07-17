@@ -1,17 +1,17 @@
-From 9a23b5b70c64b2fc448ff7555e775cbe763917df Mon Sep 17 00:00:00 2001
+From 4f7410e44e99ecb3243095490896d1eb9ae4453c Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Sat, 17 Jul 2021 13:32:39 +0100
 Subject: [PATCH] optimise dockerfile
 
 ---
- Dockerfile | 47 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 12 deletions(-)
+ Dockerfile | 49 +++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 12 deletions(-)
 
 diff --git a/Dockerfile b/Dockerfile
-index 63dee906..95f5d541 100644
+index 63dee906..b00acbea 100644
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -1,26 +1,49 @@
+@@ -1,26 +1,51 @@
 -FROM node:14-alpine
 -
 -ENV APP_PATH /opt/outline
@@ -58,6 +58,8 @@ index 63dee906..95f5d541 100644
 +RUN apk add --no-cache tini
 +
 +COPY --from=builder $APP_PATH/build ./build
++COPY --from=builder $APP_PATH/server ./server
++COPY --from=builder $APP_PATH/.sequelizerc ./.sequelizerc
 +COPY --from=deps-prod $APP_PATH/node_modules ./node_modules
 +COPY --from=builder $APP_PATH/package.json ./package.json
 +
