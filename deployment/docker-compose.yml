@@ -29,8 +29,8 @@ services:
       - 9000:9000
       # - 9001:9001
     environment:
-      - MINIO_ACCESS_KEY=outline
-      - MINIO_SECRET_KEY=${S3_KEY}
+      - MINIO_ROOT_USER=outline
+      - MINIO_ROOT_PASSWORD=${S3_KEY}
       - MINIO_BROWSER=off
   outline:
     container_name: outline_web
