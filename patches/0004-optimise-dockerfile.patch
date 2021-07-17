@@ -1,25 +1,26 @@
-From 4f7410e44e99ecb3243095490896d1eb9ae4453c Mon Sep 17 00:00:00 2001
+From 42f9f801af330fda4673822ae50b4570ba064265 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Sat, 17 Jul 2021 13:32:39 +0100
 Subject: [PATCH] optimise dockerfile
 
 ---
- Dockerfile | 49 +++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 12 deletions(-)
+ Dockerfile | 53 +++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 41 insertions(+), 12 deletions(-)
 
 diff --git a/Dockerfile b/Dockerfile
-index 63dee906..b00acbea 100644
+index 63dee906..e68b903a 100644
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -1,26 +1,51 @@
+@@ -1,26 +1,55 @@
 -FROM node:14-alpine
 -
 -ENV APP_PATH /opt/outline
 -RUN mkdir -p $APP_PATH
 +# syntax=docker/dockerfile:1.2
++ARG APP_PATH /opt/outline
 +FROM node:14-alpine AS deps-common
  
-+ARG APP_PATH /opt/outline
++ARG APP_PATH
  WORKDIR $APP_PATH
 +COPY ./package.json ./yarn.lock ./
 +
@@ -38,6 +39,8 @@ index 63dee906..b00acbea 100644
 -RUN yarn --pure-lockfile
 +# ---
 +FROM node:14-alpine AS builder
++
++ARG APP_PATH
 +WORKDIR $APP_PATH
  
  COPY . .
@@ -51,6 +54,7 @@ index 63dee906..b00acbea 100644
 +# ---
 +FROM node:14-alpine AS runner
  
++ARG APP_PATH
 +WORKDIR $APP_PATH
  ENV NODE_ENV production
 -CMD yarn start
