@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 pushd () {
   command pushd "$@" > /dev/null
 }
