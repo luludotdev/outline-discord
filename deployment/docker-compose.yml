@@ -34,7 +34,7 @@ services:
       - MINIO_BROWSER=off
   outline:
     container_name: outline_web
-    image: ghcr.io/lolpants/outline-discord:v0.57.0-8f6e762
+    image: ghcr.io/lolpants/outline-discord
     # command: yarn db:migrate --env=production-ssl-disabled
     restart: on-failure
     depends_on:
