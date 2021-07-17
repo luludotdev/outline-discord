@@ -1,0 +1,77 @@
+From ae2812654135990f41124652ef6ce41d0ec41b45 Mon Sep 17 00:00:00 2001
+From: Jack Baron <jackmbaron@gmail.com>
+Date: Sat, 17 Jul 2021 13:32:39 +0100
+Subject: [PATCH] optimise dockerfile
+
+---
+ Dockerfile | 46 ++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 12 deletions(-)
+
+diff --git a/Dockerfile b/Dockerfile
+index 63dee906..4441e575 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -1,26 +1,48 @@
+-FROM node:14-alpine
++# syntax=docker/dockerfile:1.2
++FROM node:14-alpine AS deps-common
+ 
+-ENV APP_PATH /opt/outline
+-RUN mkdir -p $APP_PATH
++WORKDIR /opt/outline
++COPY ./package.json ./yarn.lock ./
+ 
+-WORKDIR $APP_PATH
++# ---
++FROM deps-common AS deps-dev
++RUN yarn install --no-optional --frozen-lockfile && \
++  yarn cache clean
+ 
+-COPY package.json ./
+-COPY yarn.lock ./
++# ---
++FROM deps-common AS deps-prod
++RUN yarn install --production=true --frozen-lockfile && \
++  yarn cache clean
+ 
+-RUN yarn --pure-lockfile
++# ---
++FROM node:14-alpine AS builder
++WORKDIR /opt/outline
+ 
+ COPY . .
++COPY --from=deps-dev /opt/outline/node_modules ./node_modules
++RUN yarn build
+ 
+-RUN yarn build && \
+-  yarn --production --ignore-scripts --prefer-offline && \
+-  rm -rf shared && \
+-  rm -rf app
++# ---
++FROM node:14-alpine AS runner
+ 
++WORKDIR /opt/outline
+ ENV NODE_ENV production
+-CMD yarn start
++
++RUN apk add --no-cache tini
++
++COPY --from=builder /opt/outline/build ./build
++COPY --from=deps-prod /opt/outline/node_modules ./node_modules
++COPY --from=builder /opt/outline/package.json ./package.json
++
++RUN addgroup -g 1001 -S nodejs && \
++  adduser -S nodejs -u 1001 && \
++  chown -R nodejs:nodejs /opt/outline/build
++
++USER nodejs
+ 
+ ARG GIT_REPO
+ LABEL org.opencontainers.image.source=${GIT_REPO}
+ 
+ EXPOSE 3000
++ENTRYPOINT ["/sbin/tini", "--"]
++CMD ["yarn", "start"]
+-- 
+2.30.1.windows.1
+
