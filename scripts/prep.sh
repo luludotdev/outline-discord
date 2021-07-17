@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+pushd () {
+  command pushd "$@" > /dev/null
+}
+
+popd () {
+  command popd "$@" > /dev/null
+}
+
 # Clone Repo
 rm -rf outline
 git clone https://github.com/outline/outline.git outline
