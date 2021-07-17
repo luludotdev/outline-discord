@@ -1,0 +1,7 @@
+outline.localhost {
+  reverse_proxy :3000
+}
+
+cdn.outline.localhost {
+  reverse_proxy :9000
+}

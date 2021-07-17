@@ -1,0 +1,74 @@
+version: '3'
+services:
+  redis:
+    container_name: outline_redis
+    image: redis:alpine
+    restart: on-failure
+    networks:
+      - internal
+  postgres:
+    container_name: outline_postgres
+    image: postgres:alpine
+    restart: on-failure
+    networks:
+      - internal
+    volumes:
+      - ./postgres:/var/lib/postgresql/data:rw
+    environment:
+      - POSTGRES_USER=outline
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=outline
+  s3:
+    container_name: outline_s3
+    image: minio/minio
+    command: server /data --console-address :9001
+    restart: on-failure
+    volumes:
+      - ./s3_storage:/data:rw
+    ports:
+      - 9000:9000
+      # - 9001:9001
+    environment:
+      - MINIO_ACCESS_KEY=outline
+      - MINIO_SECRET_KEY=${S3_KEY}
+      - MINIO_BROWSER=off
+  outline:
+    container_name: outline_web
+    image: ghcr.io/lolpants/outline-discord:v0.57.0-8f6e762
+    # command: yarn db:migrate --env=production-ssl-disabled
+    restart: on-failure
+    depends_on:
+      - redis
+      - postgres
+      - s3
+    networks:
+      - internal
+    ports:
+      - 3000:3000
+    environment:
+      # Secrets
+      - SECRET_KEY=${OUTLINE_SECRET_1}
+      - UTILS_SECRET=${OUTLINE_SECRET_2}
+      # Database Connections
+      - DATABASE_URL=postgres://outline:${POSTGRES_PASSWORD}@postgres:5432/outline
+      - PGSSLMODE=disable
+      - REDIS_URL=redis://redis:6379
+      # S3 Connection
+      - AWS_ACCESS_KEY_ID=outline
+      - AWS_SECRET_ACCESS_KEY=${S3_KEY}
+      - AWS_REGION=us-east-1
+      - AWS_S3_UPLOAD_BUCKET_URL=${S3_URL}
+      - AWS_S3_UPLOAD_BUCKET_NAME=outline
+      - AWS_S3_UPLOAD_MAX_SIZE=26214400
+      - AWS_S3_FORCE_PATH_STYLE=true
+      - AWS_S3_ACL=private
+      # HTTP Access
+      - URL=${OUTLINE_URL}
+      - FORCE_HTTPS=false
+      # Discord Auth
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_GUILD_ID=${DISCORD_GUILD_ID}
+
+networks:
+  internal:
