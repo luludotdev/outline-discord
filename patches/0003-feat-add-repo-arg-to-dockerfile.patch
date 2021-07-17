@@ -1,0 +1,24 @@
+From 304722247456c81258ce44b8c4a7bd9012655df7 Mon Sep 17 00:00:00 2001
+From: Jack Baron <jackmbaron@gmail.com>
+Date: Sat, 17 Jul 2021 11:34:54 +0100
+Subject: [PATCH] feat: add repo arg to dockerfile
+
+---
+ Dockerfile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Dockerfile b/Dockerfile
+index f64cc622..63dee906 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -20,4 +20,7 @@ RUN yarn build && \
+ ENV NODE_ENV production
+ CMD yarn start
+ 
++ARG GIT_REPO
++LABEL org.opencontainers.image.source=${GIT_REPO}
++
+ EXPOSE 3000
+-- 
+2.30.1.windows.1
+
