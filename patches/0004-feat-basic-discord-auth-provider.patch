@@ -1,8 +1,8 @@
-From 137b11ab1c3c4a3d5be95d24b38f3256fdb3b045 Mon Sep 17 00:00:00 2001
+From 9c7243e47b0069125334a36aafde1b6febe4c527 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Sat, 17 Jul 2021 11:07:48 +0100
-Subject: [PATCH] feat: basic discord auth provider only works with a single
- guild via the DISCORD_GUILD_ID env var
+Subject: [PATCH] feat: basic discord auth provider only works with a
+ single guild via the DISCORD_GUILD_ID env var
 
 ---
  package.json                     |  1 +
@@ -13,11 +13,11 @@ Subject: [PATCH] feat: basic discord auth provider only works with a single
  create mode 100644 server/auth/providers/discord.js
 
 diff --git a/package.json b/package.json
-index 1e0df56a..1fbf79d5 100644
+index 41f67e63..81c2b10f 100644
 --- a/package.json
 +++ b/package.json
-@@ -113,6 +113,7 @@
-     "outline-icons": "^1.27.0",
+@@ -114,6 +114,7 @@
+     "outline-icons": "^1.30.0",
      "oy-vey": "^0.10.0",
      "passport": "^0.4.1",
 +    "passport-discord": "^0.1.4",
@@ -133,10 +133,10 @@ index 42145fe7..577c048d 100644
    message: string = "User must authenticate with email",
    redirectUrl: string = env.URL
 diff --git a/yarn.lock b/yarn.lock
-index cf7f9866..8a1cf3d6 100644
+index e3fda727..026c7690 100644
 --- a/yarn.lock
 +++ b/yarn.lock
-@@ -10066,6 +10066,13 @@ pascalcase@^0.1.1:
+@@ -10065,6 +10065,13 @@ pascalcase@^0.1.1:
    resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
    integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
  
