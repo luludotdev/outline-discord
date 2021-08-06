@@ -16,7 +16,7 @@ git clone https://github.com/outline/outline.git outline
 pushd outline
 
 # Checkout latest tagged version
-LATEST_TAG=`git describe --tags --abbrev=0`
+LATEST_TAG=`git describe --tags $(git rev-list --tags --max-count=1)`
 git checkout "${LATEST_TAG}"
 
 # Apply Patches
