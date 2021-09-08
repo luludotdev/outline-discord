@@ -1,17 +1,34 @@
-From 2af516725d7fb466e12b08c94211b07f45571582 Mon Sep 17 00:00:00 2001
+From 290652c9cb45b4fa2f6874c80be7bff48b25b013 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 8 Sep 2021 20:27:12 +0100
-Subject: [PATCH] feat: basic discord auth provider only works with a single
- guild via the DISCORD_GUILD_ID env var
+Subject: [PATCH] feat: basic discord auth provider only works with a
+ single guild via the DISCORD_GUILD_ID env var
 
 ---
+ app/scenes/Login/Notices.js             |  5 ++
  package.json                            |  1 +
  server/errors.js                        |  6 ++
  server/routes/auth/providers/discord.js | 86 +++++++++++++++++++++++++
  yarn.lock                               |  7 ++
- 4 files changed, 100 insertions(+)
+ 5 files changed, 105 insertions(+)
  create mode 100644 server/routes/auth/providers/discord.js
 
+diff --git a/app/scenes/Login/Notices.js b/app/scenes/Login/Notices.js
+index 34c91073..1548b50b 100644
+--- a/app/scenes/Login/Notices.js
++++ b/app/scenes/Login/Notices.js
+@@ -72,6 +72,11 @@ export default function Notices() {
+           admin.
+         </NoticeAlert>
+       )}
++      {notice === "guild-not-allowed" && (
++        <NoticeAlert>
++          Authentication failed - You are not in the required Discord guild.
++        </NoticeAlert>
++      )}
+     </>
+   );
+ }
 diff --git a/package.json b/package.json
 index 930abfaa..cc9ace79 100644
 --- a/package.json

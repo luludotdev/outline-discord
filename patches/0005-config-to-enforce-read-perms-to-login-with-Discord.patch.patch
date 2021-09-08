@@ -1,13 +1,31 @@
-From e86220d3c2bd576d9d2124e6f7377c25ff250943 Mon Sep 17 00:00:00 2001
+From 8336a131e36ab85ca1df5b72d1a65d5aed2de091 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 8 Sep 2021 20:47:52 +0100
 Subject: [PATCH] config to enforce read perms to login with Discord
 
 ---
+ app/scenes/Login/Notices.js             |  6 ++++++
  server/errors.js                        |  6 ++++++
  server/routes/auth/providers/discord.js | 16 +++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ 3 files changed, 27 insertions(+), 1 deletion(-)
 
+diff --git a/app/scenes/Login/Notices.js b/app/scenes/Login/Notices.js
+index 1548b50b..d87bc9aa 100644
+--- a/app/scenes/Login/Notices.js
++++ b/app/scenes/Login/Notices.js
+@@ -77,6 +77,12 @@ export default function Notices() {
+           Authentication failed - You are not in the required Discord guild.
+         </NoticeAlert>
+       )}
++      {notice === "guild-no-perms" && (
++        <NoticeAlert>
++          Authentication failed - You do not have the required Discord Guild
++          permissions to access this instance.
++        </NoticeAlert>
++      )}
+     </>
+   );
+ }
 diff --git a/server/errors.js b/server/errors.js
 index 5285b61b..9fd92360 100644
 --- a/server/errors.js
