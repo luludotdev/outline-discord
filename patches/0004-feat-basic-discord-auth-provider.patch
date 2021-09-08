@@ -1,16 +1,16 @@
-From 3f7f036f45a2de695d256195ba32277966422a59 Mon Sep 17 00:00:00 2001
+From 2af516725d7fb466e12b08c94211b07f45571582 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
-Date: Sat, 17 Jul 2021 11:07:48 +0100
-Subject: [PATCH] feat: basic discord auth provider only works with a
- single guild via the DISCORD_GUILD_ID env var
+Date: Wed, 8 Sep 2021 20:27:12 +0100
+Subject: [PATCH] feat: basic discord auth provider only works with a single
+ guild via the DISCORD_GUILD_ID env var
 
 ---
- package.json                     |  1 +
- server/auth/providers/discord.js | 85 ++++++++++++++++++++++++++++++++
- server/errors.js                 |  6 +++
- yarn.lock                        |  7 +++
- 4 files changed, 99 insertions(+)
- create mode 100644 server/auth/providers/discord.js
+ package.json                            |  1 +
+ server/errors.js                        |  6 ++
+ server/routes/auth/providers/discord.js | 86 +++++++++++++++++++++++++
+ yarn.lock                               |  7 ++
+ 4 files changed, 100 insertions(+)
+ create mode 100644 server/routes/auth/providers/discord.js
 
 diff --git a/package.json b/package.json
 index 930abfaa..cc9ace79 100644
@@ -24,21 +24,38 @@ index 930abfaa..cc9ace79 100644
      "passport-google-oauth2": "^0.2.0",
      "passport-oauth2": "^1.6.0",
      "passport-slack-oauth2": "^1.1.0",
-diff --git a/server/auth/providers/discord.js b/server/auth/providers/discord.js
+diff --git a/server/errors.js b/server/errors.js
+index ba28608e..5285b61b 100644
+--- a/server/errors.js
++++ b/server/errors.js
+@@ -75,6 +75,12 @@ export function MaximumTeamsError(
+   return httpErrors(400, message, { id: "maximum_teams" });
+ }
+ 
++export function DiscordInvalidGuildError(
++  message: string = "You are not in the required Discord guild"
++) {
++  return httpErrors(400, message, { id: "guild_not_allowed" });
++}
++
+ export function EmailAuthenticationRequiredError(
+   message: string = "User must authenticate with email",
+   redirectUrl: string = env.URL
+diff --git a/server/routes/auth/providers/discord.js b/server/routes/auth/providers/discord.js
 new file mode 100644
-index 00000000..4d5d8793
+index 00000000..2d4e493f
 --- /dev/null
-+++ b/server/auth/providers/discord.js
-@@ -0,0 +1,85 @@
++++ b/server/routes/auth/providers/discord.js
+@@ -0,0 +1,86 @@
 +// @flow
 +import passport from "@outlinewiki/koa-passport";
 +import Router from "koa-router";
 +import { Strategy as DiscordStrategy } from "passport-discord";
-+import accountProvisioner from "../../commands/accountProvisioner";
-+import env from "../../env";
-+import { DiscordInvalidGuildError } from "../../errors";
-+import passportMiddleware from "../../middlewares/passport";
-+import { StateStore } from "../../utils/passport";
++import accountProvisioner from "../../../commands/accountProvisioner";
++import env from "../../../env";
++import { DiscordInvalidGuildError } from "../../../errors";
++import passportMiddleware from "../../../middlewares/passport";
++import { StateStore } from "../../../utils/passport";
 +
 +const router = new Router();
 +const providerName = "discord";
@@ -69,6 +86,7 @@ index 00000000..4d5d8793
 +          const guild = profile.guilds.find(
 +            (guild) => guild.id === DISCORD_GUILD_ID
 +          );
++
 +          if (!guild) {
 +            throw new DiscordInvalidGuildError();
 +          }
@@ -115,23 +133,6 @@ index 00000000..4d5d8793
 +}
 +
 +export default router;
-diff --git a/server/errors.js b/server/errors.js
-index ba28608e..5285b61b 100644
---- a/server/errors.js
-+++ b/server/errors.js
-@@ -75,6 +75,12 @@ export function MaximumTeamsError(
-   return httpErrors(400, message, { id: "maximum_teams" });
- }
- 
-+export function DiscordInvalidGuildError(
-+  message: string = "You are not in the required Discord guild"
-+) {
-+  return httpErrors(400, message, { id: "guild_not_allowed" });
-+}
-+
- export function EmailAuthenticationRequiredError(
-   message: string = "User must authenticate with email",
-   redirectUrl: string = env.URL
 diff --git a/yarn.lock b/yarn.lock
 index a92f9fff..e262f647 100644
 --- a/yarn.lock
