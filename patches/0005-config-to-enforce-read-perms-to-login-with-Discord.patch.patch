@@ -1,0 +1,71 @@
+From e86220d3c2bd576d9d2124e6f7377c25ff250943 Mon Sep 17 00:00:00 2001
+From: Jack Baron <jackmbaron@gmail.com>
+Date: Wed, 8 Sep 2021 20:47:52 +0100
+Subject: [PATCH] config to enforce read perms to login with Discord
+
+---
+ server/errors.js                        |  6 ++++++
+ server/routes/auth/providers/discord.js | 16 +++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/server/errors.js b/server/errors.js
+index 5285b61b..9fd92360 100644
+--- a/server/errors.js
++++ b/server/errors.js
+@@ -81,6 +81,12 @@ export function DiscordInvalidGuildError(
+   return httpErrors(400, message, { id: "guild_not_allowed" });
+ }
+ 
++export function DiscordMissingPermissionsError(
++  message: string = "You do not have permissions to log in with this Discord guild"
++) {
++  return httpErrors(400, message, { id: "guild_no_perms" });
++}
++
+ export function EmailAuthenticationRequiredError(
+   message: string = "User must authenticate with email",
+   redirectUrl: string = env.URL
+diff --git a/server/routes/auth/providers/discord.js b/server/routes/auth/providers/discord.js
+index 2d4e493f..1e5cfb75 100644
+--- a/server/routes/auth/providers/discord.js
++++ b/server/routes/auth/providers/discord.js
+@@ -4,7 +4,10 @@ import Router from "koa-router";
+ import { Strategy as DiscordStrategy } from "passport-discord";
+ import accountProvisioner from "../../../commands/accountProvisioner";
+ import env from "../../../env";
+-import { DiscordInvalidGuildError } from "../../../errors";
++import {
++  DiscordInvalidGuildError,
++  DiscordMissingPermissionsError,
++} from "../../../errors";
+ import passportMiddleware from "../../../middlewares/passport";
+ import { StateStore } from "../../../utils/passport";
+ 
+@@ -13,6 +16,7 @@ const providerName = "discord";
+ const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
+ const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
+ const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
++const DISCORD_REQUIRE_READ_PERMS = !!process.env.DISCORD_REQUIRE_READ_PERMS;
+ 
+ export const config = {
+   name: "Discord",
+@@ -42,6 +46,16 @@ if (DISCORD_CLIENT_ID) {
+             throw new DiscordInvalidGuildError();
+           }
+ 
++          if (DISCORD_REQUIRE_READ_PERMS) {
++            const perms = BigInt(guild.permissions_new);
++            const readPerm = BigInt(0x400);
++
++            const hasPerms = (perms & readPerm) === readPerm;
++            if (!hasPerms) {
++              throw new DiscordMissingPermissionsError();
++            }
++          }
++
+           const result = await accountProvisioner({
+             ip: req.ip,
+             team: {
+-- 
+2.30.1.windows.1
+
