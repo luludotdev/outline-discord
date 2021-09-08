@@ -1,4 +1,4 @@
-From 98322f6c7c51040a92375aadd1182e7d9782215b Mon Sep 17 00:00:00 2001
+From 6e89860376cd64bc946b44f6e8858834621d1d5d Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Fri, 16 Jul 2021 06:58:04 +0100
 Subject: [PATCH] feat: add Discord auth logo

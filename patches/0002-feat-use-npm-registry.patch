@@ -1,4 +1,4 @@
-From 9716795cd523059ef17e0ab787e7553d7bc9cf1a Mon Sep 17 00:00:00 2001
+From 6a25b2708272ebd276c8e8bfd60e5392ffd8b356 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 21 Jul 2021 03:01:05 +0100
 Subject: [PATCH] feat: use npm registry
@@ -18,7 +18,7 @@ index 00000000..32c73870
 +registry "https://registry.npmjs.org/"
 +network-timeout 600000
 diff --git a/Dockerfile b/Dockerfile
-index e533ea81..286f2c92 100644
+index 255d09ac..6954c01d 100644
 --- a/Dockerfile
 +++ b/Dockerfile
 @@ -4,7 +4,7 @@ FROM node:14-alpine AS deps-common
