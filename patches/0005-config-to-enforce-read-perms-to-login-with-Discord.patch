@@ -1,4 +1,4 @@
-From 8336a131e36ab85ca1df5b72d1a65d5aed2de091 Mon Sep 17 00:00:00 2001
+From 2fb98c2edd25a5dfc0633397669d7eba802b068f Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 8 Sep 2021 20:47:52 +0100
 Subject: [PATCH] config to enforce read perms to login with Discord

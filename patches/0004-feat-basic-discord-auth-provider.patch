@@ -1,4 +1,4 @@
-From 290652c9cb45b4fa2f6874c80be7bff48b25b013 Mon Sep 17 00:00:00 2001
+From 710ececd0f05d9056576bfe95c55096f947609b0 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 8 Sep 2021 20:27:12 +0100
 Subject: [PATCH] feat: basic discord auth provider only works with a
@@ -30,16 +30,16 @@ index 34c91073..1548b50b 100644
    );
  }
 diff --git a/package.json b/package.json
-index 930abfaa..cc9ace79 100644
+index e95d4540..c59dba4d 100644
 --- a/package.json
 +++ b/package.json
-@@ -114,6 +114,7 @@
-     "outline-icons": "^1.30.0",
+@@ -120,6 +120,7 @@
+     "outline-icons": "^1.33.1",
      "oy-vey": "^0.10.0",
      "passport": "^0.4.1",
 +    "passport-discord": "^0.1.4",
      "passport-google-oauth2": "^0.2.0",
-     "passport-oauth2": "^1.6.0",
+     "passport-oauth2": "^1.6.1",
      "passport-slack-oauth2": "^1.1.0",
 diff --git a/server/errors.js b/server/errors.js
 index ba28608e..5285b61b 100644
@@ -151,10 +151,10 @@ index 00000000..2d4e493f
 +
 +export default router;
 diff --git a/yarn.lock b/yarn.lock
-index a92f9fff..e262f647 100644
+index fbfa3be2..833afcf0 100644
 --- a/yarn.lock
 +++ b/yarn.lock
-@@ -10065,6 +10065,13 @@ pascalcase@^0.1.1:
+@@ -11093,6 +11093,13 @@ pascalcase@^0.1.1:
    resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
    integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
  

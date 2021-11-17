@@ -1,4 +1,4 @@
-From 6a25b2708272ebd276c8e8bfd60e5392ffd8b356 Mon Sep 17 00:00:00 2001
+From 10e00d14c58fd8a96e4484f461fe65b986c1cb68 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Wed, 21 Jul 2021 03:01:05 +0100
 Subject: [PATCH] feat: use npm registry
