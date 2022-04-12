@@ -1,0 +1,88 @@
+From 898bbe8e72ec4f92d601a8065cc1fb6b8fc0a49d Mon Sep 17 00:00:00 2001
+From: Jack Baron <jackmbaron@gmail.com>
+Date: Tue, 12 Apr 2022 02:46:48 +0100
+Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
+
+---
+ app/scenes/Login/Notices.tsx            |  6 ++++++
+ server/errors.ts                        |  8 ++++++++
+ server/routes/auth/providers/discord.ts | 13 ++++++++++++-
+ 3 files changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
+index 707e6313..224cd8bc 100644
+--- a/app/scenes/Login/Notices.tsx
++++ b/app/scenes/Login/Notices.tsx
+@@ -76,6 +76,12 @@ export default function Notices() {
+           Authentication failed - You are not in the required Discord guild.
+         </NoticeAlert>
+       )}
++      {notice === "guild-no-perms" && (
++        <NoticeAlert>
++          Authentication failed - You do not have the required Discord Guild
++          permissions to access this instance.
++        </NoticeAlert>
++      )}
+     </>
+   );
+ }
+diff --git a/server/errors.ts b/server/errors.ts
+index a3e9ec96..b276385b 100644
+--- a/server/errors.ts
++++ b/server/errors.ts
+@@ -103,6 +103,14 @@ export function DiscordInvalidGuildError(
+   });
+ }
+ 
++export function DiscordMissingPermissionsError(
++  message = "You do not have permissions to log in with this Discord guild"
++) {
++  return httpErrors(400, message, {
++    id: "guild_no_perms",
++  });
++}
++
+ export function EmailAuthenticationRequiredError(
+   message = "User must authenticate with email",
+   // @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
+diff --git a/server/routes/auth/providers/discord.ts b/server/routes/auth/providers/discord.ts
+index ead52d77..f813f805 100644
+--- a/server/routes/auth/providers/discord.ts
++++ b/server/routes/auth/providers/discord.ts
+@@ -3,7 +3,7 @@ import Router from "koa-router";
+ import { Strategy as DiscordStrategy } from "passport-discord";
+ import accountProvisioner from "@server/commands/accountProvisioner";
+ import env from "@server/env";
+-import { DiscordInvalidGuildError } from "@server/errors";
++import { DiscordInvalidGuildError, DiscordMissingPermissionsError } from "@server/errors";
+ import passportMiddleware from "@server/middlewares/passport";
+ import { StateStore } from "@server/utils/passport";
+ 
+@@ -12,6 +12,7 @@ const providerName = "discord";
+ const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
+ const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
+ const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
++const DISCORD_REQUIRE_READ_PERMS = !!process.env.DISCORD_REQUIRE_READ_PERMS;
+ 
+ export const config = {
+   name: "Discord",
+@@ -41,6 +42,16 @@ if (DISCORD_CLIENT_ID) {
+           throw DiscordInvalidGuildError();
+         }
+ 
++        if (DISCORD_REQUIRE_READ_PERMS) {
++          const perms = BigInt(guild.permissions_new);
++          const readPerm = BigInt(0x400);
++
++          const hasPerms = (perms & readPerm) === readPerm;
++          if (!hasPerms) {
++            throw DiscordMissingPermissionsError();
++          }
++        }
++
+         const result = await accountProvisioner({
+           ip: req.ip,
+           team: {
+-- 
+2.34.1.windows.1
+

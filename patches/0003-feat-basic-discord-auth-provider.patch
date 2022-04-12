@@ -1,0 +1,201 @@
+From de0f350d60292acd33612fea31b82c4a4ff4e8b0 Mon Sep 17 00:00:00 2001
+From: Jack Baron <jackmbaron@gmail.com>
+Date: Tue, 12 Apr 2022 02:38:22 +0100
+Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
+ single guild via the DISCORD_GUILD_ID env var
+
+---
+ app/scenes/Login/Notices.tsx            |  5 ++
+ package.json                            |  2 +
+ server/errors.ts                        |  8 +++
+ server/routes/auth/providers/discord.ts | 86 +++++++++++++++++++++++++
+ yarn.lock                               | 18 +++++-
+ 5 files changed, 118 insertions(+), 1 deletion(-)
+ create mode 100644 server/routes/auth/providers/discord.ts
+
+diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
+index 91cead7c..707e6313 100644
+--- a/app/scenes/Login/Notices.tsx
++++ b/app/scenes/Login/Notices.tsx
+@@ -71,6 +71,11 @@ export default function Notices() {
+           admin.
+         </NoticeAlert>
+       )}
++      {notice === "guild-not-allowed" && (
++        <NoticeAlert>
++          Authentication failed - You are not in the required Discord guild.
++        </NoticeAlert>
++      )}
+     </>
+   );
+ }
+diff --git a/package.json b/package.json
+index bf628d26..9bc4e611 100644
+--- a/package.json
++++ b/package.json
+@@ -127,6 +127,7 @@
+     "outline-icons": "^1.42.0",
+     "oy-vey": "^0.10.0",
+     "passport": "^0.4.1",
++    "passport-discord": "^0.1.4",
+     "passport-google-oauth2": "^0.2.0",
+     "passport-oauth2": "^1.6.1",
+     "passport-slack-oauth2": "^1.1.0",
+@@ -235,6 +236,7 @@
+     "@types/natural-sort": "^0.0.21",
+     "@types/node": "15.12.2",
+     "@types/nodemailer": "^6.4.4",
++    "@types/passport-discord": "^0.1.5",
+     "@types/passport-oauth2": "^1.4.11",
+     "@types/prosemirror-commands": "^1.0.1",
+     "@types/prosemirror-dropcursor": "^1.0.0",
+diff --git a/server/errors.ts b/server/errors.ts
+index 338efddc..a3e9ec96 100644
+--- a/server/errors.ts
++++ b/server/errors.ts
+@@ -95,6 +95,14 @@ export function MaximumTeamsError(
+   });
+ }
+ 
++export function DiscordInvalidGuildError(
++  message = "You are not in the required Discord guild"
++) {
++  return httpErrors(400, message, {
++    id: "guild_not_allowed",
++  });
++}
++
+ export function EmailAuthenticationRequiredError(
+   message = "User must authenticate with email",
+   // @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
+diff --git a/server/routes/auth/providers/discord.ts b/server/routes/auth/providers/discord.ts
+new file mode 100644
+index 00000000..ead52d77
+--- /dev/null
++++ b/server/routes/auth/providers/discord.ts
+@@ -0,0 +1,86 @@
++import passport from "@outlinewiki/koa-passport";
++import Router from "koa-router";
++import { Strategy as DiscordStrategy } from "passport-discord";
++import accountProvisioner from "@server/commands/accountProvisioner";
++import env from "@server/env";
++import { DiscordInvalidGuildError } from "@server/errors";
++import passportMiddleware from "@server/middlewares/passport";
++import { StateStore } from "@server/utils/passport";
++
++const router = new Router();
++const providerName = "discord";
++const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
++const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
++const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
++
++export const config = {
++  name: "Discord",
++  enabled: !!DISCORD_CLIENT_ID,
++};
++
++const scopes = ["identify", "email", "guilds"];
++
++if (DISCORD_CLIENT_ID) {
++  const strategy = new DiscordStrategy(
++    {
++      clientID: DISCORD_CLIENT_ID,
++      clientSecret: DISCORD_CLIENT_SECRET!,
++      callbackURL: `${env.URL}/auth/discord.callback`,
++      passReqToCallback: true,
++      // @ts-expect-error
++      store: new StateStore() as undefined,
++      scope: scopes,
++    },
++    async function (req, accessToken, refreshToken, profile, done) {
++      try {
++        const guild = profile.guilds?.find(
++          (guild) => guild.id === DISCORD_GUILD_ID
++        );
++
++        if (!guild) {
++          throw DiscordInvalidGuildError();
++        }
++
++        const result = await accountProvisioner({
++          ip: req.ip,
++          team: {
++            name: guild.name,
++            domain: guild.id,
++            subdomain: guild.id,
++            avatarUrl:
++              guild.icon &&
++              `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`,
++          },
++          user: {
++            name: profile.username,
++            email: profile.email!,
++            avatarUrl:
++              profile.avatar &&
++              `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`,
++          },
++          authenticationProvider: {
++            name: providerName,
++            providerId: guild.id,
++          },
++          authentication: {
++            providerId: profile.id,
++            accessToken,
++            refreshToken,
++            scopes,
++          },
++        });
++        return done(null, result.user, result);
++      } catch (err) {
++        // @ts-expect-error
++        return done(err, null);
++      }
++    }
++  );
++  passport.use(strategy);
++
++  router.get("discord", passport.authenticate(providerName));
++
++  router.get("discord.callback", passportMiddleware(providerName));
++}
++
++export default router;
+diff --git a/yarn.lock b/yarn.lock
+index 7c238b98..613654eb 100644
+--- a/yarn.lock
++++ b/yarn.lock
+@@ -3062,7 +3062,16 @@
+   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
+   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+ 
+-"@types/passport-oauth2@^1.4.11":
++"@types/passport-discord@^0.1.5":
++  version "0.1.5"
++  resolved "https://registry.yarnpkg.com/@types/passport-discord/-/passport-discord-0.1.5.tgz#57c5c51f03278d85dd3406cadd181f937839c385"
++  integrity sha512-hq/EcxU+gKaGdgTAX9LDMEt+/FmDJphq84qRUt5jt553a5RPCwxonb7QwOZUO3XBhzLTXIbJmPQd5/5bTXJnyA==
++  dependencies:
++    "@types/express" "*"
++    "@types/passport" "*"
++    "@types/passport-oauth2" "*"
++
++"@types/passport-oauth2@*", "@types/passport-oauth2@^1.4.11":
+   version "1.4.11"
+   resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
+   integrity sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA==
+@@ -11386,6 +11395,13 @@ pascalcase@^0.1.1:
+   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
+   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
+ 
++passport-discord@^0.1.4:
++  version "0.1.4"
++  resolved "https://registry.yarnpkg.com/passport-discord/-/passport-discord-0.1.4.tgz#9265be11952cdd54d77c47eaae352834444cf0f6"
++  integrity sha512-VJWPYqSOmh7SaCLw/C+k1ZqCzJnn2frrmQRx1YrcPJ3MQ+Oa31XclbbmqFICSvl8xv3Fqd6YWQ4H4p1MpIN9rA==
++  dependencies:
++    passport-oauth2 "^1.5.0"
++
+ passport-google-oauth2@^0.2.0:
+   version "0.2.0"
+   resolved "https://registry.yarnpkg.com/passport-google-oauth2/-/passport-google-oauth2-0.2.0.tgz#fc9ea59e7091f02e24fd16d6be9257ea982ebbc3"
+-- 
+2.34.1.windows.1
+

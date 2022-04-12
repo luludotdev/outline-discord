@@ -1,27 +1,26 @@
-From 331f0e33bd2691a861c2e51ec59d71c51acdb43b Mon Sep 17 00:00:00 2001
+From 76be26b3571b0e9954f9ca5b0180fb5eac244fd0 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
-Date: Fri, 16 Jul 2021 06:58:04 +0100
-Subject: [PATCH] feat: add Discord auth logo
+Date: Tue, 12 Apr 2022 02:25:16 +0100
+Subject: [PATCH 2/4] feat: add Discord auth logo
 
 ---
- app/components/AuthLogo/DiscordLogo.js | 27 ++++++++++++++++++++++++++
- app/components/AuthLogo/index.js       |  7 +++++++
+ app/components/AuthLogo/DiscordLogo.tsx | 26 +++++++++++++++++++++++++
+ app/components/AuthLogo/index.tsx       |  8 ++++++++
  2 files changed, 34 insertions(+)
- create mode 100644 app/components/AuthLogo/DiscordLogo.js
+ create mode 100644 app/components/AuthLogo/DiscordLogo.tsx
 
-diff --git a/app/components/AuthLogo/DiscordLogo.js b/app/components/AuthLogo/DiscordLogo.js
+diff --git a/app/components/AuthLogo/DiscordLogo.tsx b/app/components/AuthLogo/DiscordLogo.tsx
 new file mode 100644
-index 00000000..c766e61a
+index 00000000..f23a52e9
 --- /dev/null
-+++ b/app/components/AuthLogo/DiscordLogo.js
-@@ -0,0 +1,27 @@
-+// @flow
++++ b/app/components/AuthLogo/DiscordLogo.tsx
+@@ -0,0 +1,26 @@
 +import * as React from "react";
 +
 +type Props = {
-+  size?: number,
-+  fill?: string,
-+  className?: string,
++  size?: number;
++  fill?: string;
++  className?: string;
 +};
 +
 +function DiscordLogo({ size = 34, fill = "#FFF", className }: Props) {
@@ -42,31 +41,31 @@ index 00000000..c766e61a
 +}
 +
 +export default DiscordLogo;
-diff --git a/app/components/AuthLogo/index.js b/app/components/AuthLogo/index.js
-index d2b444f2..d5874654 100644
---- a/app/components/AuthLogo/index.js
-+++ b/app/components/AuthLogo/index.js
-@@ -1,6 +1,7 @@
- // @flow
+diff --git a/app/components/AuthLogo/index.tsx b/app/components/AuthLogo/index.tsx
+index 669b6591..36175968 100644
+--- a/app/components/AuthLogo/index.tsx
++++ b/app/components/AuthLogo/index.tsx
+@@ -1,5 +1,6 @@
  import * as React from "react";
  import styled from "styled-components";
 +import DiscordLogo from "./DiscordLogo";
  import GoogleLogo from "./GoogleLogo";
  import MicrosoftLogo from "./MicrosoftLogo";
  import SlackLogo from "./SlackLogo";
-@@ -30,6 +31,12 @@ function AuthLogo({ providerName, size = 16 }: Props) {
-           <MicrosoftLogo size={size} />
+@@ -32,6 +33,13 @@ function AuthLogo({ providerName, size = 16 }: Props) {
          </Logo>
        );
+ 
 +    case "discord":
 +      return (
 +        <Logo>
 +          <DiscordLogo size={size} />
 +        </Logo>
 +      );
++
      default:
        return null;
    }
 -- 
-2.30.1.windows.1
+2.34.1.windows.1
 
