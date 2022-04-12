@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare Workspace
         shell: bash
         run: ./scripts/prep.sh
@@ -46,12 +46,12 @@ jobs:
           registry: ghcr.io
           username: ${{ steps.prepare.outputs.docker_user }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and Push
+      - name: Build Base Image
         uses: docker/build-push-action@v2
         with:
           context: ./outline
           file: ./outline/Dockerfile.base
-          push: false
+          load: true
           tags: outlinewiki/outline-base
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
