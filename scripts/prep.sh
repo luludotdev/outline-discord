@@ -22,5 +22,10 @@ git checkout "${LATEST_TAG}"
 # Apply Patches
 git apply ../patches/*.patch
 
+# Merge Dockerfiles
+sed -i 's#outlinewiki/outline-base#deps#g' Dockerfile
+cat Dockerfile.base Dockerfile > Dockerfile.tmp
+mv Dockerfile.tmp Dockerfile
+
 # Exit Repo
 popd
