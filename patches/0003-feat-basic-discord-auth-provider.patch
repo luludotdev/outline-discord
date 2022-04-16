@@ -1,4 +1,4 @@
-From de0f350d60292acd33612fea31b82c4a4ff4e8b0 Mon Sep 17 00:00:00 2001
+From 8cc9f416b5f54e4106d5d58dbde8138449b39c6d Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:38:22 +0100
 Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
@@ -30,7 +30,7 @@ index 91cead7c..707e6313 100644
    );
  }
 diff --git a/package.json b/package.json
-index bf628d26..9bc4e611 100644
+index f74d3223..6dd1362d 100644
 --- a/package.json
 +++ b/package.json
 @@ -127,6 +127,7 @@

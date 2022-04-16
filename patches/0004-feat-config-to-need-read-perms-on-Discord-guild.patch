@@ -1,4 +1,4 @@
-From 898bbe8e72ec4f92d601a8065cc1fb6b8fc0a49d Mon Sep 17 00:00:00 2001
+From 3aa92451a9794003bea832551e7994c37d71dc92 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:46:48 +0100
 Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
