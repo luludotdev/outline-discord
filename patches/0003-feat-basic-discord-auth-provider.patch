@@ -1,4 +1,4 @@
-From 8cc9f416b5f54e4106d5d58dbde8138449b39c6d Mon Sep 17 00:00:00 2001
+From 659677c2a678c11d4d4e755b017a397f8327c38d Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:38:22 +0100
 Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
@@ -14,11 +14,11 @@ Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
  create mode 100644 server/routes/auth/providers/discord.ts
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index 91cead7c..707e6313 100644
+index 6d7de2b9..de5f4b75 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
-@@ -71,6 +71,11 @@ export default function Notices() {
-           admin.
+@@ -79,6 +79,11 @@ export default function Notices() {
+           team domain.
          </NoticeAlert>
        )}
 +      {notice === "guild-not-allowed" && (
@@ -30,10 +30,10 @@ index 91cead7c..707e6313 100644
    );
  }
 diff --git a/package.json b/package.json
-index f74d3223..6dd1362d 100644
+index 05d1cb1f..d8413993 100644
 --- a/package.json
 +++ b/package.json
-@@ -127,6 +127,7 @@
+@@ -131,6 +131,7 @@
      "outline-icons": "^1.42.0",
      "oy-vey": "^0.10.0",
      "passport": "^0.4.1",
@@ -41,7 +41,7 @@ index f74d3223..6dd1362d 100644
      "passport-google-oauth2": "^0.2.0",
      "passport-oauth2": "^1.6.1",
      "passport-slack-oauth2": "^1.1.0",
-@@ -235,6 +236,7 @@
+@@ -240,6 +241,7 @@
      "@types/natural-sort": "^0.0.21",
      "@types/node": "15.12.2",
      "@types/nodemailer": "^6.4.4",
@@ -50,10 +50,10 @@ index f74d3223..6dd1362d 100644
      "@types/prosemirror-commands": "^1.0.1",
      "@types/prosemirror-dropcursor": "^1.0.0",
 diff --git a/server/errors.ts b/server/errors.ts
-index 338efddc..a3e9ec96 100644
+index 1730e244..4271ef64 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
-@@ -95,6 +95,14 @@ export function MaximumTeamsError(
+@@ -110,6 +110,14 @@ export function MaximumTeamsError(
    });
  }
  
@@ -67,7 +67,7 @@ index 338efddc..a3e9ec96 100644
 +
  export function EmailAuthenticationRequiredError(
    message = "User must authenticate with email",
-   // @ts-expect-error ts-migrate(2322) FIXME: Type 'string | undefined' is not assignable to typ... Remove this comment to see the full error message
+   redirectUrl = env.URL
 diff --git a/server/routes/auth/providers/discord.ts b/server/routes/auth/providers/discord.ts
 new file mode 100644
 index 00000000..ead52d77
@@ -161,10 +161,10 @@ index 00000000..ead52d77
 +
 +export default router;
 diff --git a/yarn.lock b/yarn.lock
-index 7c238b98..613654eb 100644
+index 0d9e835f..d5a5265d 100644
 --- a/yarn.lock
 +++ b/yarn.lock
-@@ -3062,7 +3062,16 @@
+@@ -3078,7 +3078,16 @@
    resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
    integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
  
@@ -182,7 +182,7 @@ index 7c238b98..613654eb 100644
    version "1.4.11"
    resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
    integrity sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA==
-@@ -11386,6 +11395,13 @@ pascalcase@^0.1.1:
+@@ -11541,6 +11550,13 @@ pascalcase@^0.1.1:
    resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
    integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
  
