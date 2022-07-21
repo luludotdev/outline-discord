@@ -1,4 +1,4 @@
-From 659677c2a678c11d4d4e755b017a397f8327c38d Mon Sep 17 00:00:00 2001
+From f7db88881543b42e0e4ad79911e58370a425a304 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:38:22 +0100
 Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
@@ -14,10 +14,10 @@ Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
  create mode 100644 server/routes/auth/providers/discord.ts
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index 6d7de2b9..de5f4b75 100644
+index 6b3a890c..94c85014 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
-@@ -79,6 +79,11 @@ export default function Notices() {
+@@ -89,6 +89,11 @@ export default function Notices() {
            team domain.
          </NoticeAlert>
        )}
@@ -30,27 +30,27 @@ index 6d7de2b9..de5f4b75 100644
    );
  }
 diff --git a/package.json b/package.json
-index 05d1cb1f..d8413993 100644
+index d35e2be6..71c0883b 100644
 --- a/package.json
 +++ b/package.json
-@@ -131,6 +131,7 @@
-     "outline-icons": "^1.42.0",
+@@ -137,6 +137,7 @@
+     "outline-icons": "^1.43.1",
      "oy-vey": "^0.10.0",
-     "passport": "^0.4.1",
+     "passport": "^0.6.0",
 +    "passport-discord": "^0.1.4",
      "passport-google-oauth2": "^0.2.0",
      "passport-oauth2": "^1.6.1",
-     "passport-slack-oauth2": "^1.1.0",
-@@ -240,6 +241,7 @@
-     "@types/natural-sort": "^0.0.21",
-     "@types/node": "15.12.2",
+     "passport-slack-oauth2": "^1.1.1",
+@@ -251,6 +252,7 @@
+     "@types/node": "18.0.6",
+     "@types/node-fetch": "^2.6.2",
      "@types/nodemailer": "^6.4.4",
 +    "@types/passport-discord": "^0.1.5",
      "@types/passport-oauth2": "^1.4.11",
      "@types/prosemirror-commands": "^1.0.1",
      "@types/prosemirror-dropcursor": "^1.0.0",
 diff --git a/server/errors.ts b/server/errors.ts
-index 1730e244..4271ef64 100644
+index 40233102..e49cf0b5 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
 @@ -110,6 +110,14 @@ export function MaximumTeamsError(
@@ -161,10 +161,10 @@ index 00000000..ead52d77
 +
 +export default router;
 diff --git a/yarn.lock b/yarn.lock
-index 0d9e835f..d5a5265d 100644
+index ebe827f3..c6867fbc 100644
 --- a/yarn.lock
 +++ b/yarn.lock
-@@ -3078,7 +3078,16 @@
+@@ -2876,7 +2876,16 @@
    resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
    integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
  
@@ -182,7 +182,7 @@ index 0d9e835f..d5a5265d 100644
    version "1.4.11"
    resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
    integrity sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA==
-@@ -11541,6 +11550,13 @@ pascalcase@^0.1.1:
+@@ -11440,6 +11449,13 @@ pascalcase@^0.1.1:
    resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
    integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
  

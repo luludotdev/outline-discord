@@ -1,4 +1,4 @@
-From 5343180be04b117c34803ed2fa869efa7dffde33 Mon Sep 17 00:00:00 2001
+From 14e6fd01b6c7b32e1b828a735e5ac26d0afbbd89 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:46:48 +0100
 Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
@@ -10,10 +10,10 @@ Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
  3 files changed, 26 insertions(+), 1 deletion(-)
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index de5f4b75..88cbfbfe 100644
+index 94c85014..8e50f82f 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
-@@ -84,6 +84,12 @@ export default function Notices() {
+@@ -94,6 +94,12 @@ export default function Notices() {
            Authentication failed - You are not in the required Discord guild.
          </NoticeAlert>
        )}
@@ -27,7 +27,7 @@ index de5f4b75..88cbfbfe 100644
    );
  }
 diff --git a/server/errors.ts b/server/errors.ts
-index 4271ef64..d9becff7 100644
+index e49cf0b5..45a5eda6 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
 @@ -118,6 +118,14 @@ export function DiscordInvalidGuildError(
