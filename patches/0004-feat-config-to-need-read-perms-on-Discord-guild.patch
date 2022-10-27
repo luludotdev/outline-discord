@@ -1,19 +1,20 @@
-From 14e6fd01b6c7b32e1b828a735e5ac26d0afbbd89 Mon Sep 17 00:00:00 2001
+From cbfefc23b3d9724266971c41079bd630eb51e1a1 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
-Date: Tue, 12 Apr 2022 02:46:48 +0100
+Date: Thu, 27 Oct 2022 23:34:16 +0100
 Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
 
 ---
  app/scenes/Login/Notices.tsx            |  6 ++++++
+ server/env.ts                           |  6 ++++++
  server/errors.ts                        |  8 ++++++++
- server/routes/auth/providers/discord.ts | 13 ++++++++++++-
- 3 files changed, 26 insertions(+), 1 deletion(-)
+ server/routes/auth/providers/discord.ts | 24 +++++++++++++++++++++++-
+ 4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index 94c85014..8e50f82f 100644
+index 47237d32..1fbe6030 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
-@@ -94,6 +94,12 @@ export default function Notices() {
+@@ -103,6 +103,12 @@ export default function Notices() {
            Authentication failed - You are not in the required Discord guild.
          </NoticeAlert>
        )}
@@ -26,11 +27,28 @@ index 94c85014..8e50f82f 100644
      </>
    );
  }
+diff --git a/server/env.ts b/server/env.ts
+index 828bab11..5571408b 100644
+--- a/server/env.ts
++++ b/server/env.ts
+@@ -449,6 +449,12 @@ export class Environment {
+   @CannotUseWithout("DISCORD_CLIENT_ID")
+   public DISCORD_GUILD_ID = this.toOptionalString(process.env.DISCORD_GUILD_ID);
+ 
++  @IsOptional()
++  @IsBoolean()
++  public DISCORD_REQUIRE_READ_PERMS = this.toBoolean(
++    process.env.DISCORD_REQUIRE_READ_PERMS ?? "false"
++  );
++
+   /**
+    * OICD client credentials. To enable authentication with any
+    * compatible provider.
 diff --git a/server/errors.ts b/server/errors.ts
-index e49cf0b5..45a5eda6 100644
+index 8829e30f..3236dc25 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
-@@ -118,6 +118,14 @@ export function DiscordInvalidGuildError(
+@@ -141,6 +141,14 @@ export function DiscordInvalidGuildError(
    });
  }
  
@@ -44,33 +62,44 @@ index e49cf0b5..45a5eda6 100644
 +
  export function EmailAuthenticationRequiredError(
    message = "User must authenticate with email",
-   redirectUrl = env.URL
+   redirectUrl = "/"
 diff --git a/server/routes/auth/providers/discord.ts b/server/routes/auth/providers/discord.ts
-index ead52d77..f813f805 100644
+index d19d4b58..b2755f89 100644
 --- a/server/routes/auth/providers/discord.ts
 +++ b/server/routes/auth/providers/discord.ts
-@@ -3,7 +3,7 @@ import Router from "koa-router";
+@@ -3,7 +3,10 @@ import Router from "koa-router";
  import { Strategy as DiscordStrategy } from "passport-discord";
  import accountProvisioner from "@server/commands/accountProvisioner";
  import env from "@server/env";
 -import { DiscordInvalidGuildError } from "@server/errors";
-+import { DiscordInvalidGuildError, DiscordMissingPermissionsError } from "@server/errors";
++import {
++  DiscordInvalidGuildError,
++  DiscordMissingPermissionsError,
++} from "@server/errors";
  import passportMiddleware from "@server/middlewares/passport";
  import { StateStore } from "@server/utils/passport";
  
-@@ -12,6 +12,7 @@ const providerName = "discord";
- const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
- const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
- const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
-+const DISCORD_REQUIRE_READ_PERMS = !!process.env.DISCORD_REQUIRE_READ_PERMS;
+@@ -17,6 +20,15 @@ export const config = {
  
- export const config = {
-   name: "Discord",
-@@ -41,6 +42,16 @@ if (DISCORD_CLIENT_ID) {
-           throw DiscordInvalidGuildError();
+ const scopes = ["identify", "email", "guilds"];
+ 
++declare module "passport-discord" {
++  // eslint-disable-next-line @typescript-eslint/no-namespace
++  namespace Strategy {
++    interface GuildInfo {
++      permissions_new: string;
++    }
++  }
++}
++
+ if (env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET) {
+   const strategy = new DiscordStrategy(
+     {
+@@ -42,6 +54,16 @@ if (env.DISCORD_CLIENT_ID && env.DISCORD_CLIENT_SECRET) {
+           throw new Error("missing email, should never happen");
          }
  
-+        if (DISCORD_REQUIRE_READ_PERMS) {
++        if (env.DISCORD_REQUIRE_READ_PERMS) {
 +          const perms = BigInt(guild.permissions_new);
 +          const readPerm = BigInt(0x400);
 +
@@ -84,5 +113,5 @@ index ead52d77..f813f805 100644
            ip: req.ip,
            team: {
 -- 
-2.34.1.windows.1
+2.37.3.windows.1
 
