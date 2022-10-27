@@ -9,5 +9,5 @@ popd () {
 }
 
 pushd outline
-echo `git describe --tags --abbrev=0`
+echo `git describe --tags $(git rev-list --tags --max-count=1)`
 popd
