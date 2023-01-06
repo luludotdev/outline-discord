@@ -1,4 +1,4 @@
-From 8969e8804fcb7af8ec915d0919ac513a616f4151 Mon Sep 17 00:00:00 2001
+From 7a223796bb8020ab525dcccd0de640175c4cdbfa Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:25:16 +0100
 Subject: [PATCH 2/4] feat: add Discord auth logo
@@ -11,7 +11,7 @@ Subject: [PATCH 2/4] feat: add Discord auth logo
 
 diff --git a/app/components/AuthLogo/DiscordLogo.tsx b/app/components/AuthLogo/DiscordLogo.tsx
 new file mode 100644
-index 00000000..f23a52e9
+index 000000000..f23a52e9a
 --- /dev/null
 +++ b/app/components/AuthLogo/DiscordLogo.tsx
 @@ -0,0 +1,26 @@
@@ -42,7 +42,7 @@ index 00000000..f23a52e9
 +
 +export default DiscordLogo;
 diff --git a/app/components/AuthLogo/index.tsx b/app/components/AuthLogo/index.tsx
-index 669b6591..36175968 100644
+index 669b6591e..361759689 100644
 --- a/app/components/AuthLogo/index.tsx
 +++ b/app/components/AuthLogo/index.tsx
 @@ -1,5 +1,6 @@
