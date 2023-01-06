@@ -12,11 +12,13 @@ popd () {
 rm -rf outline
 git clone https://github.com/outline/outline.git outline
 
+# Get latest tag
+LATEST_TAG=`./scripts/get_tag.sh`
+
 # Enter Repo
 pushd outline
 
 # Checkout latest tagged version
-LATEST_TAG=`git describe --tags $(git rev-list --tags --max-count=1)`
 git checkout "${LATEST_TAG}"
 
 # Apply Patches

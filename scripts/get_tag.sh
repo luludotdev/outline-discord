@@ -8,6 +8,9 @@ popd () {
   command popd "$@" > /dev/null
 }
 
-pushd outline
-echo `git describe --tags $(git rev-list --tags --max-count=1)`
-popd
+# TODO: Remove hardcoded version
+echo "v0.66.3"
+
+# pushd outline
+# echo `git describe --tags $(git rev-list --tags --max-count=1)`
+# popd
