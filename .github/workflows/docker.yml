@@ -25,10 +25,10 @@ jobs:
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
 
-          echo ::set-output name=git_repo::${GIT_REPO}
-          echo ::set-output name=docker_user::${DOCKER_USER}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-          echo ::set-output name=version::${OUTLINE_TAG}-${VERSION}
+          echo "git_repo=${GIT_REPO}" >> $GITHUB_OUTPUT
+          echo "docker_user=${DOCKER_USER}" >> $GITHUB_OUTPUT
+          echo "docker_image=${DOCKER_IMAGE}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Setup Docker Buildx
