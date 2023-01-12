@@ -8,6 +8,9 @@ popd () {
   command popd "$@" > /dev/null
 }
 
+# Exit when any command fails
+set -e
+
 # Clone Repo
 ./scripts/cleanup.sh
 git clone https://github.com/outline/outline.git outline
