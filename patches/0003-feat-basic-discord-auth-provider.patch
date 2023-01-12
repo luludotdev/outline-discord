@@ -1,4 +1,4 @@
-From c024140a50034a17b13c75ef7be7fe48ff145a48 Mon Sep 17 00:00:00 2001
+From b35b8774520eb1dc84cab08ffa06af344dd248e0 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Thu, 27 Oct 2022 22:57:19 +0100
 Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
@@ -15,7 +15,7 @@ Subject: [PATCH 3/4] feat: basic discord auth provider only works with a
  create mode 100644 server/routes/auth/providers/discord.ts
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index c43816dee..47237d326 100644
+index d38e32bc2..a0ec82bb4 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
 @@ -98,6 +98,11 @@ export default function Notices() {
@@ -31,27 +31,27 @@ index c43816dee..47237d326 100644
    );
  }
 diff --git a/package.json b/package.json
-index 5d0d091b9..adeab0c6d 100644
+index 061eabff0..d3249545d 100644
 --- a/package.json
 +++ b/package.json
-@@ -139,6 +139,7 @@
-     "outline-icons": "^1.44.0",
-     "oy-vey": "^0.11.2",
+@@ -145,6 +145,7 @@
+     "outline-icons": "^1.46.0",
+     "oy-vey": "^0.12.0",
      "passport": "^0.6.0",
 +    "passport-discord": "^0.1.4",
      "passport-google-oauth2": "^0.2.0",
      "passport-oauth2": "^1.6.1",
      "passport-slack-oauth2": "^1.1.1",
-@@ -257,6 +258,7 @@
+@@ -265,6 +266,7 @@
      "@types/node": "18.0.6",
      "@types/node-fetch": "^2.6.2",
      "@types/nodemailer": "^6.4.4",
 +    "@types/passport-discord": "^0.1.6",
      "@types/passport-oauth2": "^1.4.11",
-     "@types/prosemirror-commands": "^1.0.1",
-     "@types/prosemirror-dropcursor": "^1.0.0",
+     "@types/prosemirror-commands": "^1.0.4",
+     "@types/prosemirror-dropcursor": "^1.5.0",
 diff --git a/server/env.ts b/server/env.ts
-index a68a1154a..828bab112 100644
+index 5207687c3..966f91adf 100644
 --- a/server/env.ts
 +++ b/server/env.ts
 @@ -429,6 +429,26 @@ export class Environment {
@@ -82,10 +82,10 @@ index a68a1154a..828bab112 100644
     * OICD client credentials. To enable authentication with any
     * compatible provider.
 diff --git a/server/errors.ts b/server/errors.ts
-index fc5b6c0f0..8829e30f6 100644
+index 61ec10a1b..d5a99d78e 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
-@@ -133,6 +133,14 @@ export function MaximumTeamsError(
+@@ -141,6 +141,14 @@ export function MaximumTeamsError(
    });
  }
  
@@ -194,10 +194,10 @@ index 000000000..d19d4b58c
 +
 +export default router;
 diff --git a/yarn.lock b/yarn.lock
-index e8bf48c1e..3bb3b134c 100644
+index 4cc338dbf..a89c336a7 100644
 --- a/yarn.lock
 +++ b/yarn.lock
-@@ -2962,7 +2962,16 @@
+@@ -3281,7 +3281,16 @@
    resolved "https://registry.yarnpkg.com/@types/parse5/-/parse5-6.0.3.tgz#705bb349e789efa06f43f128cef51240753424cb"
    integrity sha512-SuT16Q1K51EAVPz1K29DJ/sXjhSQ0zjvsypYJ6tlwVsRV9jwW5Adq2ch8Dq8kDBCkYnELS7N7VNCSB5nC56t/g==
  
@@ -215,7 +215,7 @@ index e8bf48c1e..3bb3b134c 100644
    version "1.4.11"
    resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz#fbca527ecb44258774d17bcb251630c321515fa9"
    integrity sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA==
-@@ -11562,6 +11571,13 @@ pascalcase@^0.1.1:
+@@ -11991,6 +12000,13 @@ pascalcase@^0.1.1:
    resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
    integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
  

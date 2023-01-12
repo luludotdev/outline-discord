@@ -1,4 +1,4 @@
-From f835ff2a1af78fb972b0244f08da42548599ad04 Mon Sep 17 00:00:00 2001
+From e04bd5ba43375501cbb2b619542263dd35694380 Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Thu, 27 Oct 2022 23:34:16 +0100
 Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
@@ -11,7 +11,7 @@ Subject: [PATCH 4/4] feat: config to need read perms on Discord guild
  4 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/app/scenes/Login/Notices.tsx b/app/scenes/Login/Notices.tsx
-index 47237d326..1fbe6030e 100644
+index a0ec82bb4..30c18ea99 100644
 --- a/app/scenes/Login/Notices.tsx
 +++ b/app/scenes/Login/Notices.tsx
 @@ -103,6 +103,12 @@ export default function Notices() {
@@ -28,7 +28,7 @@ index 47237d326..1fbe6030e 100644
    );
  }
 diff --git a/server/env.ts b/server/env.ts
-index 828bab112..5571408b4 100644
+index 966f91adf..046f5c27b 100644
 --- a/server/env.ts
 +++ b/server/env.ts
 @@ -449,6 +449,12 @@ export class Environment {
@@ -45,10 +45,10 @@ index 828bab112..5571408b4 100644
     * OICD client credentials. To enable authentication with any
     * compatible provider.
 diff --git a/server/errors.ts b/server/errors.ts
-index 8829e30f6..3236dc252 100644
+index d5a99d78e..5ca560fb2 100644
 --- a/server/errors.ts
 +++ b/server/errors.ts
-@@ -141,6 +141,14 @@ export function DiscordInvalidGuildError(
+@@ -149,6 +149,14 @@ export function DiscordInvalidGuildError(
    });
  }
  

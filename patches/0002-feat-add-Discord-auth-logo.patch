@@ -1,4 +1,4 @@
-From 7a223796bb8020ab525dcccd0de640175c4cdbfa Mon Sep 17 00:00:00 2001
+From 611f664273723588ba410c4d0a86ab92b6ec381a Mon Sep 17 00:00:00 2001
 From: Jack Baron <jackmbaron@gmail.com>
 Date: Tue, 12 Apr 2022 02:25:16 +0100
 Subject: [PATCH 2/4] feat: add Discord auth logo
@@ -42,7 +42,7 @@ index 000000000..f23a52e9a
 +
 +export default DiscordLogo;
 diff --git a/app/components/AuthLogo/index.tsx b/app/components/AuthLogo/index.tsx
-index 669b6591e..361759689 100644
+index c1bf8fda0..b371fb91d 100644
 --- a/app/components/AuthLogo/index.tsx
 +++ b/app/components/AuthLogo/index.tsx
 @@ -1,5 +1,6 @@
@@ -52,14 +52,14 @@ index 669b6591e..361759689 100644
  import GoogleLogo from "./GoogleLogo";
  import MicrosoftLogo from "./MicrosoftLogo";
  import SlackLogo from "./SlackLogo";
-@@ -32,6 +33,13 @@ function AuthLogo({ providerName, size = 16 }: Props) {
+@@ -33,6 +34,13 @@ function AuthLogo({ providerName, color, size = 16 }: Props) {
          </Logo>
        );
  
 +    case "discord":
 +      return (
 +        <Logo>
-+          <DiscordLogo size={size} />
++          <DiscordLogo size={size} fill={color} />
 +        </Logo>
 +      );
 +
