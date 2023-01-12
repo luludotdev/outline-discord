@@ -9,7 +9,7 @@ popd () {
 }
 
 # Clone Repo
-rm -rf outline
+./scripts/cleanup.sh
 git clone https://github.com/outline/outline.git outline
 
 # Get latest tag
